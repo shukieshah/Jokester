@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_joke"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.shuka.jokester.JokeActivity"
+    android:background="@color/colorPrimaryGreen">
+
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/jokester"
+        android:id="@+id/jokeLogo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="Getting Joke..."
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/jokeTextView"
+        android:textColor="@color/colorSecondary"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/jokeLogo"
+        android:textSize="18sp"/>
+
+    <Button
+        android:text="Speak"
+        android:id="@+id/speakButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/favoriteButton"
+        android:layout_alignBottom="@+id/favoriteButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onSpeak"
+        android:textColor="@color/colorSecondary"
+        android:textStyle="bold"/>
+
+    <Button
+        android:text="Favorite"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/favoriteButton"
+        android:layout_below="@+id/jokeLogo"
+        android:layout_toRightOf="@+id/jokeLogo"
+        android:layout_toEndOf="@+id/jokeLogo"
+        android:layout_marginTop="40dp"
+        android:onClick="onFavorite"
+        android:textColor="@color/colorSecondary"
+        android:textStyle="bold"/>
+
+    <Button
+        android:text="Next Joke"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/nextJokeButton"
+        android:layout_alignBaseline="@+id/favoriteButton"
+        android:layout_alignBottom="@+id/favoriteButton"
+        android:layout_toRightOf="@+id/favoriteButton"
+        android:layout_toEndOf="@+id/favoriteButton"
+        android:onClick="onNext"
+        android:textColor="@color/colorSecondary"
+        android:textStyle="bold"/>
+
+    <Button
+        android:text="Go To Favorites"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/nextJokeButton"
+        android:layout_toRightOf="@+id/nextJokeButton"
+        android:layout_toEndOf="@+id/nextJokeButton"
+        android:id="@+id/goToFavButton"
+        android:onClick="onGoToFavorites"
+        android:textColor="@color/colorSecondary"
+        android:textStyle="bold"/>
+
+
+</RelativeLayout>
