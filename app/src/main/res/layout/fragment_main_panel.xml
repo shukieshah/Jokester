@@ -21,7 +21,7 @@
 
 
     <TextView
-        android:text="Getting Joke..."
+        android:text="Getting Joke...Please Wait..."
         android:textSize="18sp"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
@@ -32,7 +32,9 @@
         android:layout_marginEnd="19dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:maxLines="10"
+        android:scrollbars="vertical"/>
 
     <ImageView
         android:layout_width="100dp"

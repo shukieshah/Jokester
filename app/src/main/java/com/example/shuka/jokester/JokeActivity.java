@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -28,7 +31,7 @@ import java.util.Locale;
 public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     private TextView jokeTextView;
-    private Locale currentSpokenLang = Locale.US;
+    private Locale currentSpokenLang = Locale.ENGLISH;
     //Synthesizes text to speech
     private TextToSpeech textToSpeech;
     private String favoritesEditTextString;
@@ -46,6 +49,7 @@ public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnIn
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joke);
         jokeTextView = (TextView) findViewById(R.id.jokeTextView);
+        jokeTextView.setMovementMethod(new ScrollingMovementMethod());
         textToSpeech = new TextToSpeech(this, this);
 
         SharedPreferences favorites = getSharedPreferences("Favorites",
@@ -66,8 +70,10 @@ public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (savedInstanceState != null) {
             String joke = savedInstanceState.getString("JOKE");
             jokeTextView.setText(joke);
-        } else {
+        } else if (isNetworkAvailable()){
             initializeJoke();
+        } else {
+            jokeTextView.setText("Could not access server. Please connect to the internet and restart the app.");
         }
     }
 
@@ -76,7 +82,7 @@ public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnIn
         Intent intent = new Intent(this, ReadingService.class);
 
         // Pass the URL that the IntentService will download from
-        intent.putExtra("url", "http://www.randomjoke.com/topic/oneliners.php");
+        intent.putExtra("url", "http://www.funny-jokes.online/types/random-joke-generator/");
 
         // Start the intent service
         this.startService(intent);
@@ -94,8 +100,10 @@ public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnIn
     }
 
     public void onFavorite(View view) {
-
-        if (nextJokeGenerated) {
+        CharSequence errorMessage = "Could not access server";
+        if (jokeTextView.getText().toString().contains(errorMessage)) {
+            Toast.makeText(this, "There is nothing to favorite", Toast.LENGTH_LONG).show();
+        } else if (nextJokeGenerated) {
             SharedPreferences favorites = getSharedPreferences("Favorites",
                     Context.MODE_PRIVATE);
 
@@ -113,16 +121,23 @@ public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnIn
     }
 
     public void onNext(View view) {
-        // Create an intent to run the IntentService in the background
-        Intent intent = new Intent(this, ReadingService.class);
+        if (isNetworkAvailable()) {
+            jokeTextView.scrollTo(0,0);
+            jokeTextView.setText("Getting joke...Please Wait...");
+            // Create an intent to run the IntentService in the background
+            Intent intent = new Intent(this, ReadingService.class);
 
-        // Pass the URL that the IntentService will download from
-        intent.putExtra("url", "http://www.randomjoke.com/topic/oneliners.php");
+            // Pass the URL that the IntentService will download from
+            intent.putExtra("url", "http://www.funny-jokes.online/types/random-joke-generator/");
 
-        // Start the intent service
-        this.startService(intent);
+            // Start the intent service
+            this.startService(intent);
 
-        nextJokeGenerated = true;
+            nextJokeGenerated = true;
+        } else {
+            jokeTextView.setText("Could not access server. Please connect to the internet and restart the app.");
+            Toast.makeText(this, "Could not get the next joke", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onGoToFavorites(View view) {
@@ -172,9 +187,8 @@ public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnIn
             String html = sb.toString();
             Document doc = Jsoup.parse(html);
             String text = doc.body().text();
-            text = text.substring(text.indexOf("appropriate") + 13, text.indexOf("Over"));
+            text = text.substring(text.indexOf("website. RANDOM") + 22, text.indexOf("Send to a friend"));
             // Put downloaded text into the EditText
-            //downloadedEditText.setText(sb.toString());
             jokeTextView.setText(text);
 
 
@@ -211,5 +225,19 @@ public class JokeActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (favoritesEditTextString.equals("Empty")) {
             favoritesEditTextString = "";
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+            //we are connected to a network
+            connected = true;
+        }
+        else {
+            connected = false;
+        }
+        return connected;
     }
 }
